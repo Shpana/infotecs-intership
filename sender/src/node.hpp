@@ -1,8 +1,8 @@
 #ifndef INFOTECS_NODE_HPP
 #define INFOTECS_NODE_HPP
 
-#include <fmt/core.h>
 #include <boost/asio.hpp>
+#include <fmt/core.h>
 
 #include "logging.hpp"
 
@@ -18,17 +18,17 @@ class Node {
         endpoint_(asio::ip::address::from_string(ip_address.data()), port) {
   }
 
-  asio::awaitable<void> Send(std::string message) {
+  asio::awaitable<void> Send(std::int64_t message) {
     asio::ip::tcp::socket socket{context_};
     try {
       co_await socket.async_connect(endpoint_, asio::use_awaitable);
     } catch (boost::system::system_error& exc) {
-      LOG_ERROR() << fmt::format("Connection to receiver failed via: {}",
+      LOG_ERROR() << fmt::format("Connection to receiver failed via: {}\n",
                                  exc.what());
       co_return;
     }
-    co_await socket.async_write_some(asio::buffer(message),
-                                     asio::use_awaitable);
+    std::array<std::int64_t, 1> buffer = {message};
+    co_await socket.async_write_some(asio::buffer(buffer), asio::use_awaitable);
   }
 
  private:

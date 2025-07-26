@@ -1,3 +1,4 @@
+#include "io.hpp"
 #include "node.hpp"
 
 using namespace infotecs;
@@ -17,7 +18,12 @@ int main() {
 
           while (!context.stopped()) {
             auto result = co_await node.Receive();
-            std::cout << result << '\n';
+
+            if (IsCorrectData(result)) {
+              std::cout << result << '\n';
+            } else {
+              LOG_ERROR() << "Data isn't correct!\n";
+            }
           }
         }(context);
       },

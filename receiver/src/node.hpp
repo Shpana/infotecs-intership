@@ -4,8 +4,8 @@
 #include <cstdint>
 #include <string_view>
 
-#include <fmt/core.h>
 #include <boost/asio.hpp>
+#include <fmt/core.h>
 
 #include "logging.hpp"
 
@@ -25,15 +25,15 @@ class Node {
         endpoint_(asio::ip::address::from_string(ip_address.data()), port) {
   }
 
-  asio::awaitable<std::string> Receive() {
+  asio::awaitable<std::int64_t> Receive() {
     asio::ip::tcp::socket socket{context_};
     asio::ip::tcp::acceptor acceptor{context_, endpoint_};
     co_await acceptor.async_accept(socket, asio::use_awaitable);
 
-    std::array<char, details::kBufferSize> buffer{};
+    std::array<std::int64_t, 1> buffer{};
     co_await socket.async_read_some(asio::buffer(buffer), asio::use_awaitable);
 
-    co_return std::string(buffer.begin(), buffer.end());
+    co_return buffer.at(0);
   }
 
  private:

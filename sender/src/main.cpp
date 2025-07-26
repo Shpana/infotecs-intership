@@ -26,7 +26,7 @@ int main() {
       if (!IsCorrectInput(input)) {
         continue;
       }
-      queue.Push(TransformInput(std::move(input)));
+      queue.Push(SortAndReplace(std::move(input)));
     }
   });
 
@@ -42,7 +42,9 @@ int main() {
             Node node{context, kIpAddress, kPort};
 
             while (!context.stopped()) {
-              co_await node.Send(queue.Pop());
+              auto result = queue.Pop();
+              std::cout << result << '\n';
+              co_await node.Send(SumDigits(result));
             }
           }(context, queue);
         },
